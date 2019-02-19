@@ -6,7 +6,7 @@
 
 <script>
 
-import { debounce} from 'lodash'
+import { debounce } from 'lodash'
 
 const { geocode } = new window.google.maps.Geocoder()
 
@@ -26,6 +26,21 @@ export default {
         }, d => {
           this.d = d.length ? d[0] : null
           this.loading = false
+
+          const {
+            geometry: {
+              location: {
+                lat,
+                lng
+              }
+            }
+          } = this.d
+
+
+          this.$emit('update:bounds', {
+            lat: lat(),
+            lng: lng()
+          })
         })
       }, 300)
     }
@@ -67,10 +82,7 @@ export default {
           lng: lng()
         }
       } else {
-        return {
-          lat: 27.8557749,
-          lng: -82
-        }
+        return null
       }
     }
   },
@@ -92,7 +104,8 @@ export default {
           this.map.setOptions(val)
         }
       },
-      deep: true
+      deep:      true,
+      immediate: true
     },
     markerOptions: {
       handler(val) {
@@ -100,7 +113,8 @@ export default {
           this.marker.setOptions(val)
         }
       },
-      deep: true
+      deep:      true,
+      immediate: true
     }
   },
   mounted() {
